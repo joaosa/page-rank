@@ -1,5 +1,6 @@
 package pt.utl.ist.cn;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
@@ -65,7 +66,8 @@ public class WordCount {
 		job.setReducerClass(Reduce.class);
 
 		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+		String outPath = new File(otherArgs[1], otherArgs[0]).toString();
+		FileOutputFormat.setOutputPath(job, new Path(outPath));
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}

@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/hadoop-examples-0.20.204.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-test-0.20.204.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-tools-0.20.204.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-configuration.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

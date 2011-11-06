@@ -54,6 +54,7 @@ public class WordCount {
 				.getRemainingArgs();
 
 		Job job = new Job(conf, "Hadoop 0.21 WordCount");
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 
@@ -65,9 +66,10 @@ public class WordCount {
 		job.setCombinerClass(Reduce.class);
 		job.setReducerClass(Reduce.class);
 
-		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+		
+		FileInputFormat.addInputPath(job, new Path("/in"));
 		String outPath = new File(otherArgs[1], otherArgs[0]).toString();
-		FileOutputFormat.setOutputPath(job, new Path(outPath));
+		FileOutputFormat.setOutputPath(job, new Path("/out"));
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}

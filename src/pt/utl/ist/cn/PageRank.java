@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -64,6 +65,14 @@ public class PageRank {
 //		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
 //
 //		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		
+		/*Apaga pasta out*/
+		Configuration config = new Configuration();
+		FileSystem hdfs = FileSystem.get(config);
+		Path path = new Path("out");
+		boolean isDeleted = hdfs.delete(path, true);
+		
+		/*Corre PageRanker - Step2*/
 		PageRanker.run();
 	}
 	

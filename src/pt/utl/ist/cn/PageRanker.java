@@ -26,6 +26,8 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 import pt.utl.ist.cn.PageRank.Map;
 import pt.utl.ist.cn.PageRank.Reduce;
+import pt.utl.ist.cn.structs.LinkOrRankWritable;
+import pt.utl.ist.cn.structs.PageWritable;
 
 public class PageRanker {
 
@@ -52,10 +54,13 @@ public class PageRanker {
 		
 	}
 	
-	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable>{
+	public static class Map extends Mapper<LongWritable, Text, Text, LinkOrRankWritable>{
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
-			System.out.println(new PageWritable(value).toString());
+			PageWritable page = new PageWritable(value);
+			for(String ref: page.getReferences()){
+				
+			}
 		}
 	}
 	

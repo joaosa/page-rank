@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -43,25 +44,28 @@ public class PageRank {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Configuration conf = new Configuration();
-		String[] otherArgs = new GenericOptionsParser(conf, args)
-				.getRemainingArgs();
-
-		Job job = new Job(conf, "PageRank");
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-
-		// Note that these are the default.
-		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-
-		job.setMapperClass(Map.class);
-		job.setCombinerClass(Reduce.class);
-		job.setReducerClass(Reduce.class);
-
-		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
-
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
+//		Configuration conf = new Configuration();
+//		String[] otherArgs = new GenericOptionsParser(conf, args)
+//				.getRemainingArgs();
+//
+//		Job job = new Job(conf, "PageRank");
+//		job.setOutputKeyClass(Text.class);
+//		job.setOutputValueClass(Text.class);
+//
+//		// Note that these are the default.
+//		job.setInputFormatClass(TextInputFormat.class);
+//		job.setOutputFormatClass(TextOutputFormat.class);
+//
+//		job.setMapperClass(Map.class);
+////		job.setCombinerClass(Reduce.class);
+////		job.setReducerClass(Reduce.class);
+//
+//		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+//		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+//
+//		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		PageRanker.run();
 	}
+	
+	
 }

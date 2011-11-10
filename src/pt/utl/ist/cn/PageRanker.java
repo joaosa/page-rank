@@ -36,6 +36,7 @@ public class PageRanker {
 	public static void run() throws IOException, ClassNotFoundException, InterruptedException{
 		Configuration conf = new Configuration();
 
+
 		Job job = new Job(conf, "PageRank");
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
@@ -45,13 +46,16 @@ public class PageRanker {
 		job.setOutputFormatClass(TextOutputFormat.class);
 
 		job.setMapOutputValueClass(LinkOrRankWritable.class);
+		job.setMapOutputKeyClass(Text.class);
 		
 		job.setMapperClass(Map.class);
 //		job.setCombinerClass(Reduce.class);
 		job.setReducerClass(Reduce.class);
+		
+		//PageRank.moveToTrash(conf, new Path("out"));
 
-		FileInputFormat.addInputPath(job, new Path("in"));
-		FileOutputFormat.setOutputPath(job, new Path("/out"));
+		FileInputFormat.addInputPath(job, new Path("/in"));
+		FileOutputFormat.setOutputPath(job, new Path("out"));
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		
@@ -63,22 +67,24 @@ public class PageRanker {
 				throws IOException, InterruptedException {
 			PageWritable page = new PageWritable(value);
 			for(String ref: page.getReferences()){
-				context.write(new Text(ref), 
-						new LinkOrRankWritable(page.getRank(), page.getReferences().size()));
+				LinkOrRankWritable lor = new LinkOrRankWritable(page.getRank(), page.getReferences().size());
+				context.write(new Text(ref),lor);
+				System.out.println("Key: "+new Text(ref).toString());
 			}
-			context.write(new Text(page.getURL()),
-					new LinkOrRankWritable(page.getReferences()));
+			LinkOrRankWritable lor = new LinkOrRankWritable(page.getReferences());
+			context.write(new Text(page.getURL()),lor);
 		}
 	}
 	
 	public static class Reduce extends Reducer<Text, LinkOrRankWritable, Text, Text> {
 		
-		private static double DAMPING = 0.85;
+		private static double DAMPING = 0.15;
 
 		public void reduce(Text key, Iterable<LinkOrRankWritable> values, Context context)
 				throws IOException, InterruptedException {
 			ArrayList<String> references = null;
 			double linkSum = 0;
+			String keyString =key.toString();
 			for(LinkOrRankWritable val: values){
 				if(val.isList()){
 					references = val.getReferences();
@@ -86,7 +92,6 @@ public class PageRanker {
 					linkSum += val.getRank()/val.getDegree();
 				}
 			}
-			
 			if(references==null) return;
 			
 			double pageRankSum = DAMPING*linkSum + (1-DAMPING);
@@ -94,7 +99,7 @@ public class PageRanker {
 			for(String ref: references){
 				res+=ref+" ";
 			}
-			context.write(key, new Text(res));
+			context.write(new Text(keyString), new Text(res));
 		}
 	}
 	

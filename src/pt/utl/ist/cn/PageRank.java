@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.Trash;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -76,5 +77,14 @@ public class PageRank {
 		PageRanker.run();
 	}
 	
+	public static void moveToTrash(Configuration conf,Path path) throws IOException
+	{
+	     Trash t=new Trash(conf);
+	     boolean isMoved=t.moveToTrash(path);
+	     if(!isMoved)
+	     {
+	    	 System.out.println("Trash is not enabled or file is already in the trash.");
+	     }
+	}
 	
 }

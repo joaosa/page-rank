@@ -38,6 +38,10 @@ public class PageWritable implements WritableComparable<PageWritable> {
 			references.add(tokens[i]);
 		}
 	}
+	
+	public double getRank(){
+		return rank;
+	}
 
 	public ArrayList<String> getReferences(){
 		return references;

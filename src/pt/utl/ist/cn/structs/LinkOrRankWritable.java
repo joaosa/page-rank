@@ -11,12 +11,25 @@ import org.apache.hadoop.io.WritableComparable;
 /* Pode ser a descrição com o rank e o número de links ou um array de links**/
 public class LinkOrRankWritable implements WritableComparable<LinkOrRankWritable>  {
 	
-	boolean isList;
+	private boolean isList;
 	double rank;
 	int degree;
 	ArrayList<String> references;
 	
 	
+	public boolean isList(){
+		return isList;
+	}
+	
+	public double getRank(){
+		return rank;
+	}
+	public int getDegree(){
+		return degree;
+	}
+	public ArrayList<String> getReferences(){
+		return references;
+	}
 	public LinkOrRankWritable(double rank,int degree){
 		isList=false;
 		this.rank=rank;

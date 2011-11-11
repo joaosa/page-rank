@@ -48,28 +48,7 @@ public class PageRank {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		Configuration conf = new Configuration();
-//		String[] otherArgs = new GenericOptionsParser(conf, args)
-//				.getRemainingArgs();
-//
-//		Job job = new Job(conf, "PageRank");
-//		job.setOutputKeyClass(Text.class);
-//		job.setOutputValueClass(Text.class);
-//
-//		// Note that these are the default.
-//		job.setInputFormatClass(TextInputFormat.class);
-//		job.setOutputFormatClass(TextOutputFormat.class);
-//
-//		job.setMapperClass(Map.class);
-//		job.setCombinerClass(Reduce.class);
-//		job.setReducerClass(Reduce.class);
-//
-//		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-//		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
-//
-//		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		
-		/*Apaga pasta out*/
+		/*Apaga pasta PageRank00000*/
 		Configuration config = new Configuration();
 		FileSystem hdfs = FileSystem.get(config);
 		Path path=new Path("PageRank00000");
@@ -79,7 +58,7 @@ public class PageRank {
 		PageRanker.run("/in","PageRank00000");
 		/*Corre PageRanker - Step2*/
 		int i;
-		for(i=0;i<20;i++){
+		for(i=0;i<3;i++){
 			if(i!=0) {
 				path = new Path("PageRank"+nf.format(i-1));
 				hdfs.delete(path, true);
@@ -90,16 +69,15 @@ public class PageRank {
 			PageRanker.run("PageRank"+nf.format(i),"PageRank"+nf.format(i+1));
 		}
 		PageRanker.run("PageRank"+nf.format(i),"/out");
+		//TODO
+		//PageOrderer.order("/out", args[1]);
+		new PageOrderer().order("/out", "ordered");
+		
+		hdfs = FileSystem.get(config);
+		path=new Path("/out");
+		hdfs.delete(path, true);
 	}
 	
-	public static void moveToTrash(Configuration conf,Path path) throws IOException
-	{
-	     Trash t=new Trash(conf);
-	     boolean isMoved=t.moveToTrash(path);
-	     if(!isMoved)
-	     {
-	    	 System.out.println("Trash is not enabled or file is already in the trash.");
-	     }
-	}
+	
 	
 }

@@ -44,15 +44,15 @@ public class PageParser {
 
 
 
-	public static void main(String[] args) throws Exception {
+	public static String parseDirectory(String args) throws Exception {
 		
 		// Get Directory and Children Directories
-		File dir = new File(args[0]);
+		File dir = new File(args);
 		String[] children = dir.list();
 
 		try{
 			// Create file 
-			FileWriter fstream = new FileWriter(args[1]+"/PageRank.txt");
+			FileWriter fstream = new FileWriter("PageRank.txt");
 			BufferedWriter out = new BufferedWriter(fstream);
 
 			if (children == null) {
@@ -83,6 +83,7 @@ public class PageParser {
 		}catch (Exception e){//Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 		}
+		return "PageRank.txt";
 	}
 }
 

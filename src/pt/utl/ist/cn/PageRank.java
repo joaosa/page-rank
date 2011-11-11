@@ -54,11 +54,18 @@ public class PageRank {
 		Path path=new Path("PageRank00000");
 		hdfs.delete(path, true);
 		
+		String linksFile = new String("page_rank.txt");
+		
+		/*TODO funcao BRUNO (step1) - output directoria do ficheiro com os links*/
+		linksFile=PageParser.parseDirectory(args[0]);
+		
+		hdfs.copyFromLocalFile(false, true, new Path(linksFile), new Path("/in/"+linksFile));
+		
 		NumberFormat nf = new DecimalFormat("00000");
 		PageRanker.run("/in","PageRank00000");
 		/*Corre PageRanker - Step2*/
 		int i;
-		for(i=0;i<3;i++){
+		for(i=0;i<5;i++){
 			if(i!=0) {
 				path = new Path("PageRank"+nf.format(i-1));
 				hdfs.delete(path, true);
@@ -69,11 +76,10 @@ public class PageRank {
 			PageRanker.run("PageRank"+nf.format(i),"PageRank"+nf.format(i+1));
 		}
 		PageRanker.run("PageRank"+nf.format(i),"/out");
-		//TODO
-		//PageOrderer.order("/out", args[1]);
-		new PageOrderer().order("/out", "ordered");
 		
-		hdfs = FileSystem.get(config);
+		new PageOrderer().order("/out", args[1]);
+		//new PageOrderer().order("/out", "ordered");
+		
 		path=new Path("/out");
 		hdfs.delete(path, true);
 	}

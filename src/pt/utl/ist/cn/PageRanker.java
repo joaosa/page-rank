@@ -72,9 +72,11 @@ public class PageRanker {
 			for(String ref: page.getReferences()){
 				LinkOrRankWritable lor = new LinkOrRankWritable(page.getRank(), page.getReferences().size());
 				context.write(new Text(ref),lor);
+				System.out.println(new Text(ref).toString());
 			}
 			LinkOrRankWritable lor = new LinkOrRankWritable(page.getReferences());
 			context.write(new Text(page.getURL()),lor);
+			System.out.println(new Text(page.getURL()).toString());
 		}
 	}
 	
@@ -84,10 +86,12 @@ public class PageRanker {
 
 		public void reduce(Text key, Iterable<LinkOrRankWritable> values, Context context)
 				throws IOException, InterruptedException {
+			System.out.println(key.toString());
 			ArrayList<String> references = null;
 			double linkSum = 0;
 			String keyString =key.toString();
 			for(LinkOrRankWritable val: values){
+				System.out.println(val);
 				if(val.isList()){
 					references = val.getReferences();
 				}else{

@@ -2,41 +2,27 @@ package pt.utl.ist.cn;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.apache.hadoop.mapreduce.RecordReader;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
 
-import pt.utl.ist.cn.PageRank.Map;
-import pt.utl.ist.cn.PageRank.Reduce;
 import pt.utl.ist.cn.structs.LinkOrRankWritable;
 import pt.utl.ist.cn.structs.PageWritable;
 
 public class PageRanker {
 
 	public static int run(String input, String output) throws IOException, ClassNotFoundException, InterruptedException{
+
 		Configuration conf = new Configuration();
-
-
 		Job job = new Job(conf, "PageRank");
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
@@ -68,15 +54,18 @@ public class PageRanker {
 	public static class Map extends Mapper<LongWritable, Text, Text, LinkOrRankWritable>{
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
+			Text keys = new Text();
 			PageWritable page = new PageWritable(value);
 			for(String ref: page.getReferences()){
 				LinkOrRankWritable lor = new LinkOrRankWritable(page.getRank(), page.getReferences().size());
-				context.write(new Text(ref),lor);
-				System.out.println(new Text(ref).toString());
+				keys=new Text(String.copyValueOf(ref.toCharArray()));
+				context.write(keys,lor);
+				System.out.println(keys.toString());
 			}
 			LinkOrRankWritable lor = new LinkOrRankWritable(page.getReferences());
-			context.write(new Text(page.getURL()),lor);
-			System.out.println(new Text(page.getURL()).toString());
+			keys=new Text(String.copyValueOf(page.getURL().toCharArray()));
+			context.write(keys,lor);
+			System.out.println(keys.toString());
 		}
 	}
 	
@@ -91,7 +80,6 @@ public class PageRanker {
 			double linkSum = 0;
 			String keyString =key.toString();
 			for(LinkOrRankWritable val: values){
-				System.out.println(val);
 				if(val.isList()){
 					references = val.getReferences();
 				}else{

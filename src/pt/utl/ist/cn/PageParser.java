@@ -8,20 +8,6 @@ import java.io.FileWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-
-import pt.utl.ist.cn.WordCount.Map;
-import pt.utl.ist.cn.WordCount.Reduce;
-
 public class PageParser {
 
 	//Load Page as a String
@@ -68,7 +54,7 @@ public class PageParser {
 					Pattern pattern = Pattern.compile("<a.+href=\"(.+?)\"");
 					Matcher matcher = pattern.matcher(page);
 					// Write to file
-					out.write(filename + " " + "1.0 ");
+					out.write(filename + " \t" + "1.0 ");
 					while (matcher.find()) {
 						out.write(matcher.group(1) + " ");
 					}

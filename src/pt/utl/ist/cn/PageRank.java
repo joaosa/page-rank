@@ -1,6 +1,8 @@
 package pt.utl.ist.cn;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -70,11 +72,24 @@ public class PageRank {
 		/*Apaga pasta out*/
 		Configuration config = new Configuration();
 		FileSystem hdfs = FileSystem.get(config);
-		Path path = new Path("out");
-		boolean isDeleted = hdfs.delete(path, true);
+		Path path=new Path("PageRank00000");
+		hdfs.delete(path, true);
 		
+		NumberFormat nf = new DecimalFormat("00000");
+		PageRanker.run("/in","PageRank00000");
 		/*Corre PageRanker - Step2*/
-		PageRanker.run();
+		int i;
+		for(i=0;i<20;i++){
+			if(i!=0) {
+				path = new Path("PageRank"+nf.format(i-1));
+				hdfs.delete(path, true);
+			}
+			path = new Path("PageRank"+nf.format(i+1));
+			hdfs.delete(path, true);
+			
+			PageRanker.run("PageRank"+nf.format(i),"PageRank"+nf.format(i+1));
+		}
+		PageRanker.run("PageRank"+nf.format(i),"/out");
 	}
 	
 	public static void moveToTrash(Configuration conf,Path path) throws IOException

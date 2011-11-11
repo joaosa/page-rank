@@ -33,7 +33,7 @@ import pt.utl.ist.cn.structs.PageWritable;
 
 public class PageRanker {
 
-	public static void run() throws IOException, ClassNotFoundException, InterruptedException{
+	public static int run(String input, String output) throws IOException, ClassNotFoundException, InterruptedException{
 		Configuration conf = new Configuration();
 
 
@@ -54,10 +54,13 @@ public class PageRanker {
 		
 		//PageRank.moveToTrash(conf, new Path("out"));
 
-		FileInputFormat.addInputPath(job, new Path("/in"));
-		FileOutputFormat.setOutputPath(job, new Path("out"));
+		
+		
+		
+		FileInputFormat.addInputPath(job, new Path(input));
+		FileOutputFormat.setOutputPath(job, new Path(output));
 
-		System.exit(job.waitForCompletion(true) ? 0 : 1);
+		return (job.waitForCompletion(false) ? 0 : 1);
 		
 		
 	}
@@ -69,7 +72,6 @@ public class PageRanker {
 			for(String ref: page.getReferences()){
 				LinkOrRankWritable lor = new LinkOrRankWritable(page.getRank(), page.getReferences().size());
 				context.write(new Text(ref),lor);
-				System.out.println("Key: "+new Text(ref).toString());
 			}
 			LinkOrRankWritable lor = new LinkOrRankWritable(page.getReferences());
 			context.write(new Text(page.getURL()),lor);

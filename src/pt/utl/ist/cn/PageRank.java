@@ -1,11 +1,14 @@
 package pt.utl.ist.cn;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.Trash;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -45,36 +48,36 @@ public class PageRank {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		Configuration conf = new Configuration();
-//		String[] otherArgs = new GenericOptionsParser(conf, args)
-//				.getRemainingArgs();
-//
-//		Job job = new Job(conf, "PageRank");
-//		job.setOutputKeyClass(Text.class);
-//		job.setOutputValueClass(Text.class);
-//
-//		// Note that these are the default.
-//		job.setInputFormatClass(TextInputFormat.class);
-//		job.setOutputFormatClass(TextOutputFormat.class);
-//
-//		job.setMapperClass(Map.class);
-//		job.setCombinerClass(Reduce.class);
-//		job.setReducerClass(Reduce.class);
-//
-//		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-//		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
-//
-//		System.exit(job.waitForCompletion(true) ? 0 : 1);
-		
-		/*Apaga pasta out*/
+		/*Apaga pasta PageRank00000*/
 		Configuration config = new Configuration();
 		FileSystem hdfs = FileSystem.get(config);
-		Path path = new Path("out");
-		boolean isDeleted = hdfs.delete(path, true);
+		Path path=new Path("PageRank00000");
+		hdfs.delete(path, true);
 		
+		NumberFormat nf = new DecimalFormat("00000");
+		PageRanker.run("/in","PageRank00000");
 		/*Corre PageRanker - Step2*/
-		PageRanker.run();
+		int i;
+		for(i=0;i<3;i++){
+			if(i!=0) {
+				path = new Path("PageRank"+nf.format(i-1));
+				hdfs.delete(path, true);
+			}
+			path = new Path("PageRank"+nf.format(i+1));
+			hdfs.delete(path, true);
+			
+			PageRanker.run("PageRank"+nf.format(i),"PageRank"+nf.format(i+1));
+		}
+		PageRanker.run("PageRank"+nf.format(i),"/out");
+		//TODO
+		//PageOrderer.order("/out", args[1]);
+		new PageOrderer().order("/out", "ordered");
+		
+		hdfs = FileSystem.get(config);
+		path=new Path("/out");
+		hdfs.delete(path, true);
 	}
+	
 	
 	
 }

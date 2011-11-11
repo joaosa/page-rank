@@ -18,7 +18,7 @@ public class PageWritable implements WritableComparable<PageWritable> {
 	
 	public PageWritable(Text arg0){
 		String args = arg0.toString();
-		String[] tokens = args.split(" ");
+		String[] tokens = args.split("\\s+");
 		url = tokens[0];
 		rank = Double.parseDouble(tokens[1]);
 		references = new ArrayList<String>();
@@ -37,6 +37,10 @@ public class PageWritable implements WritableComparable<PageWritable> {
 		for(int i = 2; i<tokens.length ; i++){
 			references.add(tokens[i]);
 		}
+	}
+	
+	public double getRank(){
+		return rank;
 	}
 
 	public ArrayList<String> getReferences(){
